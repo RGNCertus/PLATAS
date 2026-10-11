@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PLATAS | Plataforma de Salud</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="logoplatas.png" onerror="this.style.display='none'" alt="Logo">
+                <div>
+                    <b>PLATAS</b>
+                    <small>Plataforma de Salud</small>
+                </div>
+            </div>
+            <div class="user">
+                <span class="avatar">SM</span>
+                <div>
+                    <b>Sofía Martínez</b>
+                    <small>Paciente</small>
+                </div>
+            </div>
+            <nav>
+                <button class="nav active" data-page="dashboard">⌂ <span>Inicio</span></button>
+                <button class="nav" data-page="plan">▤ <span>Mi plan</span></button>
+                <button class="nav" data-page="alimentacion">♧ <span>Alimentación</span></button>
+                <button class="nav" data-page="progreso">↗ <span>Progreso</span></button>
+                <button class="nav" data-page="mensajes">✉ <span>Mensajes</span></button>
+                <button class="nav" data-page="perfil">♙ <span>Perfil</span></button>
+                <button class="nav logout-nav" id="logoutBtn">⇥ <span>Cerrar sesión</span></button>
+            </nav>
+            <p class="side-bottom">🌱 Tu bienestar, paso a paso</p>
+        </aside>
+
+        <main>
+            <header>
+                <button id="menu" class="mobile">☰</button>
+                <div>PLATAS <span>/</span> <b id="crumb">Inicio</b></div>
+                <button class="avatar top" data-page="perfil">SM</button>
+            </header>
+
+            <div class="content">
+                <!-- Dashboard -->
+                <section class="page" id="dashboard">
+                    <p class="eyebrow">PANEL DEL PACIENTE</p>
+                    <h1>¡Hola, Sofía! 🌱</h1>
+                    <p class="muted">Aquí tienes un resumen de tu seguimiento actual.</p>
+                    
+                    <div class="stats">
+                        <article class="stat green">
+                            <span>▤</span>
+                            <small>Plan actual</small>
+                            <h3>Plan equilibrado</h3>
+                            <button data-page="plan">Ver plan →</button>
+                        </article>
+                        <article class="stat blue">
+                            <span>♧</span>
+                            <small>Registro de hoy</small>
+                            <h3 id="mealCount">2 / 3 comidas</h3>
+                            <button data-page="alimentacion">Ver registro →</button>
+                        </article>
+                        <article class="stat purple">
+                            <span>↗</span>
+                            <small>Progreso semanal</small>
+                            <h3>Seguimiento activo</h3>
+                            <button data-page="progreso">Ver detalles →</button>
+                        </article>
+                    </div>
+
+                    <div class="columns">
+                        <article class="card">
+                            <h2>Tu alimentación de hoy</h2>
+                            <p class="muted">Marca las comidas que ya registraste.</p>
+                            <label class="meal">
+                                <span>🥣 Desayuno <small>Avena con frutas</small></span>
+                                <input type="checkbox" checked class="food-check">
+                            </label>
+                            <label class="meal">
+                                <span>🥗 Almuerzo <small>Pollo con ensalada</small></span>
+                                <input type="checkbox" checked class="food-check">
+                            </label>
+                            <label class="meal">
+                                <span>🍲 Cena <small>Pendiente de registrar</small></span>
+                                <input type="checkbox" class="food-check">
+                            </label>
+                        </article>
+                        <article class="card">
+                            <h2>Recomendación</h2>
+                            <div class="tip">
+                                <span>💧</span>
+                                <div>
+                                    <b>Mantente hidratada</b>
+                                    <p>Recuerda tomar agua durante el día y seguir las indicaciones de tu nutricionista.</p>
+                                </div>
+                            </div>
+                            <button class="outline" data-page="mensajes">Consultar al nutricionista</button>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Plan -->
+                <section class="page hidden" id="plan">
+                    <p class="eyebrow">TU RUTINA</p>
+                    <h1>Mi plan alimenticio</h1>
+                    <p class="muted">Consulta las recomendaciones compartidas por tu nutricionista.</p>
+                    
+                    <article class="card plan-head">
+                        <div class="food-picture">🥑<small>Plan actual</small></div>
+                        <div>
+                            <span class="pill">● Activo</span>
+                            <h2>Plan equilibrado</h2>
+                            <p>Por: Lic. Ana Torres</p>
+                            <p class="muted">Inicio: 12 oct 2026 · Próxima revisión: 19 oct 2026</p>
+                        </div>
+                    </article>
+
+                    <h2>Comidas del día</h2>
+                    <div class="meal-grid">
+                        <article class="card meal-card">
+                            <span>🥣</span>
+                            <div>
+                                <small>DESAYUNO</small>
+                                <h3>Avena con frutas</h3>
+                                <p>Opción de desayuno según tu plan.</p>
+                                <button class="detail" data-title="Desayuno" data-text="Avena con frutas de temporada. Consulta las porciones indicadas por tu nutricionista.">Ver detalles →</button>
+                            </div>
+                        </article>
+                        <article class="card meal-card">
+                            <span>🥗</span>
+                            <div>
+                                <small>ALMUERZO</small>
+                                <h3>Pollo con ensalada</h3>
+                                <p>Una opción acompañada de verduras.</p>
+                                <button class="detail" data-title="Almuerzo" data-text="Pollo a la plancha con ensalada. Sigue las porciones acordadas con tu nutricionista.">Ver detalles →</button>
+                            </div>
+                        </article>
+                        <article class="card meal-card">
+                            <span>🍲</span>
+                            <div>
+                                <small>CENA</small>
+                                <h3>Sopa de verduras</h3>
+                                <p>Una alternativa sencilla para la cena.</p>
+                                <button class="detail" data-title="Cena" data-text="Sopa de verduras y acompañamiento según la recomendación profesional.">Ver detalles →</button>
+                            </div>
+                        </article>
+                        <article class="card meal-card">
+                            <span>🍎</span>
+                            <div>
+                                <small>REFRIGERIO</small>
+                                <h3>Fruta o yogur</h3>
+                                <p>Opción según tus preferencias.</p>
+                                <button class="detail" data-title="Refrigerio" data-text="Fruta o yogur natural, según las indicaciones de tu nutricionista.">Ver detalles →</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Alimentación -->
+                <section class="page hidden" id="alimentacion">
+                    <p class="eyebrow">REGISTRO DIARIO</p>
+                    <h1>Mi alimentación</h1>
+                    <p class="muted">Registra tus comidas para revisar tus hábitos con tu nutricionista.</p>
+                    
+                    <article class="card">
+                        <h2>Agregar una comida</h2>
+                        <form id="foodForm" class="form-inline">
+                            <select id="foodType">
+                                <option>Desayuno</option>
+                                <option>Almuerzo</option>
+                                <option>Cena</option>
+                                <option>Refrigerio</option>
+                            </select>
+                            <input id="foodName" placeholder="¿Qué comiste?" required>
+                            <button class="primary">Guardar</button>
+                        </form>
+                    </article>
+
+                    <article class="card">
+                        <h2>Registros recientes</h2>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Comida</th>
+                                        <th>Detalle</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="foodRows">
+                                    <tr>
+                                        <td>Desayuno</td>
+                                        <td>Avena con frutas</td>
+                                        <td>Hoy</td>
+                                        <td><span class="pill">Registrado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Almuerzo</td>
+                                        <td>Pollo con ensalada</td>
+                                        <td>Hoy</td>
+                                        <td><span class="pill">Registrado</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Progreso -->
+                <section class="page hidden" id="progreso">
+                    <p class="eyebrow">SEGUIMIENTO PERSONAL</p>
+                    <h1>Mi progreso</h1>
+                    <p class="muted">Consulta tus avances y conversa sobre ellos con tu nutricionista.</p>
+                    
+                    <div class="stats">
+                        <article class="stat">
+                            <small>Dato de referencia</small>
+                            <h3>62 kg</h3>
+                            <p class="muted">Ejemplo ilustrativo</p>
+                        </article>
+                        <article class="stat">
+                            <small>Días con registros</small>
+                            <h3>5 / 7</h3>
+                            <div class="bar"><i style="width:71%"></i></div>
+                        </article>
+                        <article class="stat">
+                            <small>Seguimiento del plan</small>
+                            <h3>80%</h3>
+                            <div class="bar"><i style="width:80%"></i></div>
+                        </article>
+                    </div>
+
+                    <div class="columns">
+                        <article class="card">
+                            <h2>Evolución de ejemplo</h2>
+                            <p class="muted">Gráfico ilustrativo, no son datos reales.</p>
+                            <div class="chart">
+                                <svg viewBox="0 0 520 240" role="img" aria-label="Gráfico de progreso">
+                                    <g stroke="#e5eee8" stroke-dasharray="4 4">
+                                        <path d="M40 35H500M40 80H500M40 125H500M40 170H500M40 210H500"/>
+                                    </g>
+                                    <g fill="#718096" font-size="11">
+                                        <text x="8" y="39">70</text>
+                                        <text x="8" y="84">67</text>
+                                        <text x="8" y="129">64</text>
+                                        <text x="8" y="174">61</text>
+                                        <text x="8" y="214">58</text>
+                                        <text x="35" y="232">Lun</text>
+                                        <text x="110" y="232">Mar</text>
+                                        <text x="185" y="232">Mié</text>
+                                        <text x="260" y="232">Jue</text>
+                                        <text x="335" y="232">Vie</text>
+                                        <text x="410" y="232">Sáb</text>
+                                        <text x="480" y="232">Dom</text>
+                                    </g>
+                                    <path d="M40 55 L115 82 L190 110 L265 110 L340 145 L415 173 L490 195" fill="none" stroke="#027a4f" stroke-width="3" stroke-linecap="round"/>
+                                    <g fill="#027a4f" stroke="white" stroke-width="2">
+                                        <circle cx="40" cy="55" r="5"/>
+                                        <circle cx="115" cy="82" r="5"/>
+                                        <circle cx="190" cy="110" r="5"/>
+                                        <circle cx="265" cy="110" r="5"/>
+                                        <circle cx="340" cy="145" r="5"/>
+                                        <circle cx="415" cy="173" r="5"/>
+                                        <circle cx="490" cy="195" r="5"/>
+                                    </g>
+                                </svg>
+                            </div>
+                        </article>
+                        <article class="card">
+                            <h2>Resumen semanal</h2>
+                            <div class="summary"><span>Comidas registradas</span><b>20/28</b></div>
+                            <div class="summary"><span>Hábitos revisados</span><b>6/8</b></div>
+                            <div class="summary"><span>Seguimientos</span><b>3/4</b></div>
+                            <p class="callout">Los datos son ficticios y solo muestran cómo podría verse el seguimiento.</p>
+                        </article>
+                    </div>
+
+                    <article class="card note">
+                        <span class="avatar">AT</span>
+                        <div>
+                            <b>Observación de tu nutricionista</b>
+                            <p>“Vas avanzando. Mantén tus registros y conversemos sobre cualquier dificultad.”</p>
+                            <small>Lic. Ana Torres · Ejemplo</small>
+                        </div>
+                        <button class="outline" data-page="mensajes">Enviar mensaje</button>
+                    </article>
+                </section>
+
+                <!-- Mensajes -->
+                <section class="page hidden" id="mensajes">
+                    <p class="eyebrow">COMUNICACIÓN</p>
+                    <h1>Mensajes</h1>
+                    <p class="muted">Mantén el contacto con tu nutricionista.</p>
+                    
+                    <div class="chat card">
+                        <aside class="conversations">
+                            <input id="searchChat" placeholder="Buscar conversación">
+                            <button class="conversation active" data-contact="ana">
+                                <span class="avatar">AT</span>
+                                <span><b>Lic. Ana Torres</b><small>Claro, revisemos una alternativa...</small></span>
+                            </button>
+                            <button class="conversation" data-contact="support">
+                                <span class="avatar blue-avatar">SP</span>
+                                <span><b>Soporte PLATAS</b><small>Gracias por contactarnos.</small></span>
+                            </button>
+                            <button class="conversation" data-contact="reminder">
+                                <span class="avatar purple-avatar">RE</span>
+                                <span><b>Recordatorios</b><small>Recuerda tu seguimiento.</small></span>
+                            </button>
+                        </aside>
+                        <div class="chat-main">
+                            <div class="chat-title">
+                                <span class="avatar">AT</span>
+                                <div>
+                                    <b id="contactName">Lic. Ana Torres</b>
+                                    <small id="contactRole">Nutricionista · Conversación de ejemplo</small>
+                                </div>
+                                <span class="online"></span>
+                            </div>
+                            <div class="messages" id="messages">
+                                <div class="bubble received">
+                                    <p>Hola, ¿cómo te has sentido siguiendo el plan esta semana?</p>
+                                    <small>10:10</small>
+                                </div>
+                                <div class="bubble sent">
+                                    <p>Hola, tengo una duda. ¿Puedo cambiar el alimento de mi cena?</p>
+                                    <small>10:15 · ✓✓</small>
+                                </div>
+                                <div class="bubble received">
+                                    <p>Claro, podemos revisar una alternativa para tu plan.</p>
+                                    <small>10:20</small>
+                                </div>
+                            </div>
+                            <form id="messageForm" class="compose">
+                                <input id="messageText" placeholder="Escribe un mensaje..." required>
+                                <button class="primary" aria-label="Enviar">➤</button>
+                            </form>
+                        </div>
+                    </div>
+                    <p class="muted">Las conversaciones son ejemplos del prototipo; no se envían a personas reales.</p>
+                </section>
+
+                <!-- Perfil -->
+                <section class="page hidden" id="perfil">
+                    <p class="eyebrow">TU CUENTA</p>
+                    <h1>Mi perfil</h1>
+                    <p class="muted">Administra tus datos personales y preferencias.</p>
+                    
+                    <article class="card profile-hero">
+                        <div class="big-avatar" id="initials">SM</div>
+                        <div class="identity">
+                            <h2 id="displayName">Sofía Martínez</h2>
+                            <span class="pill">Paciente</span>
+                            <p class="muted" id="displayEmail">sofia.martinez@correo.com</p>
+                        </div>
+                        <button class="primary" id="editProfile">✎ Editar perfil</button>
+                    </article>
+
+                    <div class="columns profile-columns">
+                        <article class="card">
+                            <h2>Información personal</h2>
+                            <form id="profileForm">
+                                <label>Nombre completo<input id="fullName" value="Sofía Martínez" disabled required></label>
+                                <label>Fecha de nacimiento<input id="birth" type="date" value="2005-03-14" disabled></label>
+                                <label>Correo electrónico<input id="email" type="email" value="sofia.martinez@correo.com" disabled required></label>
+                                <label>Teléfono<input id="phone" value="+51 987 654 321" disabled></label>
+                                <div id="profileActions" class="actions hidden">
+                                    <button type="button" class="outline" id="cancelEdit">Cancelar</button>
+                                    <button class="primary">Guardar cambios</button>
+                                </div>
+                            </form>
+                        </article>
+                        <article class="card">
+                            <h2>Preferencias y cuenta</h2>
+                            <div class="setting">
+                                <div>
+                                    <b>Recordatorios</b>
+                                    <small>Recibir avisos para registrar comidas.</small>
+                                </div>
+                                <input type="checkbox" checked>
+                            </div>
+                            <div class="setting">
+                                <div>
+                                    <b>Consejos de bienestar</b>
+                                    <small>Mostrar recordatorios en el panel.</small>
+                                </div>
+                                <input type="checkbox" checked>
+                            </div>
+                            <button class="setting-link" id="passwordBtn">♙ <span>Cambiar contraseña</span> →</button>
+                            <button class="setting-link danger" data-page="login">⇥ <span>Cerrar sesión</span> →</button>
+                        </article>
+                    </div>
+                </section>
+
+                <footer>🌱 PLATAS <span>Prototipo académico · Datos ilustrativos</span></footer>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <dialog id="dialog">
+        <button id="closeDialog" class="close">×</button>
+        <div class="dialog-leaf">🌿</div>
+        <h2 id="dialogTitle"></h2>
+        <p id="dialogText"></p>
+        <button class="primary" id="okDialog">Entendido</button>
+    </dialog>
+
+    <script src="script.js"></script>
+    <script>
+        (function(){
+            const session = localStorage.getItem('nutri_session');
+            if (!session) { location.replace('index.html'); return; }
+            let user; try { user = JSON.parse(session); } catch(e) { location.replace('index.html'); return; }
+            if (user.role !== 'patient') { location.replace('nutricionista.html'); return; }
+            const name = user.name || 'Paciente';
+            const initials = name.split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();
+            const userName = document.querySelector('.user b'); if(userName) userName.textContent=name;
+            const userAvatar = document.querySelector('.user .avatar'); if(userAvatar) userAvatar.textContent=initials;
+            const topAvatar = document.querySelector('.top'); if(topAvatar) topAvatar.textContent=initials;
+            const welcome = document.querySelector('#dashboard h1'); if(welcome) welcome.textContent='¡Hola, '+name.split(' ')[0]+'! 🌱';
+            const logout = document.getElementById('logoutBtn'); if(logout) logout.addEventListener('click',()=>{localStorage.removeItem('nutri_session');location.href='index.html';});
+        })();
+    </script>
+</body>
+</html>

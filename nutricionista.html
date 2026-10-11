@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLATAS | Panel del nutricionista</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN para íconos idénticos a los requeridos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para Gráficos de Progreso -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        sidebar: {
+                            bg: '#e5e7eb',
+                            active: '#dbeafe',
+                            activeText: '#1d4ed8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .chat-bubble-patient {
+            background-color: #22c55e;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-bubble-nutri {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            border-bottom-left-radius: 2px;
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-800 antialiased bg-slate-100 flex flex-col">
+
+    <div id="authScreen" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 transition-all">
+            
+            <!-- Auth Header -->
+            <div class="bg-gradient-to-r from-brand-700 to-emerald-600 p-6 text-white text-center">
+                <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-2 text-2xl">
+                    <i class="fa-solid fa-apple-whole"></i>
+                </div>
+                <h2 class="text-2xl font-extrabold tracking-tight">PLATAS</h2>
+                <p class="text-xs text-brand-100 font-medium mt-1">Plataforma de Seguimiento y Nutrición</p>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <div id="loginFormContainer" class="p-6 space-y-4">
+                <div class="text-center">
+                    <h3 class="text-lg font-bold text-slate-800">Iniciar Sesión</h3>
+                    <p class="text-xs text-slate-500">Ingresa tus credenciales para acceder</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Correo Electrónico</label>
+                        <input type="email" id="loginEmail" required value="juan@nutrisalud.com" placeholder="correo@ejemplo.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
+                        <input type="password" id="loginPassword" required value="123456" placeholder="12345678" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+
+                    <div id="loginError" class="hidden text-xs text-rose-500 font-semibold bg-rose-50 p-2.5 rounded-xl text-center">
+                        Credenciales incorrectas o usuario no encontrado.
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-600/20 text-sm transition-all">
+                        Ingresar a la Plataforma
+                    </button>
+                </form>
+
+                <div class="text-center pt-2 border-t border-slate-100">
+                    <p class="text-xs text-slate-500">
+                        ¿No tienes una cuenta? 
+                        <button onclick="toggleAuthMode('register')" class="text-brand-600 font-bold hover:underline">Regístrate gratis</button>
+                    </p>
+                </div>
+
+                <!-- Quick Role Selector Demo Helpers -->
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+                    <span class="font-bold text-slate-600 block">Acceso Rápido:</span>
+                    <div class="flex gap-2">
+                        <button onclick="fillDemo('patient')" class="flex-1 bg-white border border-slate-200 hover:bg-slate-100 py-1 rounded text-slate-700 font-semibold">👤 Paciente</button>
+                        <button onclick="fillDemo('nutritionist')" class="flex-1 bg-white border border-slate-200 hover:bg-slate-100 py-1 rounded text-slate-700 font-semibold">👩‍⚕️ Nutricionista</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REGISTER FORM -->
+            <div id="registerFormContainer" class="p-6 space-y-4 hidden">
+                <div class="text-center">
+                    <h3 class="text-lg font-bold text-slate-800">Crear Cuenta</h3>
+                    <p class="text-xs text-slate-500">Regístrate para comenzar tu plan nutricional</p>
+                </div>
+
+                <form onsubmit="handleRegister(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nombre Completo</label>
+                        <input type="text" id="regName" required placeholder="Ej: Juan Pérez" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Correo Electrónico</label>
+                        <input type="email" id="regEmail" required placeholder="correo@ejemplo.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Rol en la Plataforma</label>
+                        <select id="regRole" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="patient">👤 Paciente</option>
+                            <option value="nutritionist">👩‍⚕️ Nutricionista</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
+                        <input type="password" id="regPassword" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-600/20 text-sm transition-all mt-2">
+                        Registrar Cuenta
+                    </button>
+                </form>
+
+                <div class="text-center pt-2 border-t border-slate-100">
+                    <p class="text-xs text-slate-500">
+                        ¿Ya tienes cuenta? 
+                        <button onclick="toggleAuthMode('login')" class="text-brand-600 font-bold hover:underline">Iniciar Sesión</button>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="appContainer" class="flex-1 flex overflow-hidden hidden">
+
+        <!-- SIDEBAR IDÉNTICO A LA IMAGEN PROPORCIONADA -->
+        <aside class="w-56 bg-[#e5e7eb] border-r border-slate-300 flex flex-col justify-between p-4 select-none shrink-0">
+            <div class="space-y-6">
+                
+                <!-- Logo NutriSalud en Sidebar -->
+                <div class="flex items-center space-x-2.5 px-2 py-1">
+                    <div class="w-8 h-8 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+                        <i class="fa-solid fa-apple-whole"></i>
+                    </div>
+                    <span class="font-extrabold text-slate-800 text-lg tracking-tight">PLATAS</span>
+                </div>
+
+                <!-- Navigation List matching image exact layout -->
+                <nav class="space-y-1" id="sidebarMenu">
+                    
+                    <!-- 1. Inicio -->
+                    <button id="nav-inicio" onclick="switchModule('inicio')" class="w-full flex items-center space-x-3.5 px-3 py-2.5 rounded-lg text-slate-800 hover:bg-slate-300/60 font-semibold text-sm transition-all">
+                        <i class="fa-solid fa-house text-lg w-6 text-center"></i>
+                        <span>Inicio</span>
+                    </button>
+
+                    <!-- 2. Mi Plan (Highlighted active by default like image) -->
+                    <button id="nav-plan" onclick="switchModule('plan')" class="w-full flex items-center space-x-3.5 px-3 py-2.5 rounded-lg bg-[#cbe2fe] text-slate-900 font-bold text-sm shadow-sm transition-all">
+                        <i class="fa-regular fa-calendar-check text-lg w-6 text-center"></i>
+                        <span>Mi Plan</span>
+                    </button>
+
+                    <!-- 3. Alimentación -->
+                    <button id="nav-alimentacion" onclick="switchModule('alimentacion')" class="w-full flex items-center space-x-3.5 px-3 py-2.5 rounded-lg text-slate-800 hover:bg-slate-300/60 font-semibold text-sm transition-all">
+                        <i class="fa-solid fa-utensils text-lg w-6 text-center"></i>
+                        <span>Alimentación</span>
+                    </button>
+
+                    <!-- 4. Progreso -->
+                    <button id="nav-progreso" onclick="switchModule('progreso')" class="w-full flex items-center space-x-3.5 px-3 py-2.5 rounded-lg text-slate-800 hover:bg-slate-300/60 font-semibold text-sm transition-all">
+                        <i class="fa-regular fa-face-smile text-lg w-6 text-center"></i>
+                        <span>Progreso</span>
+                    </button>
+
+                    <!-- 5. Mensajes -->
+                    <button id="nav-mensajes" onclick="switchModule('mensajes')" class="w-full flex items-center space-x-3.5 px-3 py-2.5 rounded-lg text-slate-800 hover:bg-slate-300/60 font-semibold text-sm transition-all relative">
+                        <i class="fa-regular fa-envelope text-lg w-6 text-center"></i>
+                        <span>Mensajes</span>
+                        <span id="sidebarChatBadge" class="hidden absolute right-3 w-2 h-2 bg-rose-500 rounded-full"></span>
+                    </button>
+
+                    <!-- 6. Perfil -->
+                    <button id="nav-perfil" onclick="switchModule('perfil')" class="w-full flex items-center space-x-3.5 px-3 py-2.5 rounded-lg text-slate-800 hover:bg-slate-300/60 font-semibold text-sm transition-all">
+                        <i class="fa-regular fa-user text-lg w-6 text-center"></i>
+                        <span>Perfil</span>
+                    </button>
+
+                </nav>
+            </div>
+
+            <!-- User Info & Logout Button -->
+            <div class="pt-4 border-t border-slate-300 space-y-3">
+                <div class="flex items-center space-x-2.5 px-2">
+                    <div id="userAvatar" class="w-8 h-8 rounded-full bg-brand-600 text-white font-bold flex items-center justify-center text-xs shadow">
+                        JP
+                    </div>
+                    <div class="truncate flex-1">
+                        <span id="userName" class="block font-bold text-xs text-slate-800 truncate">Juan Pérez</span>
+                        <span id="userRoleBadge" class="block text-[10px] text-slate-500 font-semibold uppercase">Paciente</span>
+                    </div>
+                </div>
+
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 bg-slate-200 hover:bg-rose-100 hover:text-rose-600 text-slate-700 font-bold py-2 rounded-xl text-xs transition-all border border-slate-300">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT PANEL -->
+        <main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+
+            <section id="module-inicio" class="hidden space-y-6">
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-brand-700 to-emerald-600 text-white rounded-3xl p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-white/20 uppercase tracking-wider mb-1" id="dashRoleTitle">
+                            Panel Principal
+                        </span>
+                        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight" id="welcomeText">¡Bienvenido de nuevo! 👋</h1>
+                        <p class="text-brand-100 text-sm">Resumen de tu jornada nutricional y accesos rápidos.</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/20 text-xs font-semibold flex items-center space-x-3">
+                        <i class="fa-solid fa-calendar-day text-xl"></i>
+                        <div>
+                            <span class="block text-brand-100">Hoy</span>
+                            <span class="text-sm font-bold" id="currentDateStr">Lunes, 15 de Octubre</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center text-slate-500">
+                            <span class="text-xs font-bold uppercase">Calorías Hoy</span>
+                            <i class="fa-solid fa-fire text-amber-500"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-slate-800">1,450 <span class="text-xs font-medium text-slate-400">/ 2,100 kcal</span></div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full" style="width: 68%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center text-slate-500">
+                            <span class="text-xs font-bold uppercase">Agua Ingerida</span>
+                            <i class="fa-solid fa-glass-water text-sky-500"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-slate-800">1.8 <span class="text-xs font-medium text-slate-400">/ 2.5 L</span></div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-sky-500 h-full rounded-full" style="width: 72%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center text-slate-500">
+                            <span class="text-xs font-bold uppercase">Metas del Día</span>
+                            <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-slate-800" id="dashAdherenceText">0%</div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div id="dashAdherenceBar" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center text-slate-500">
+                            <span class="text-xs font-bold uppercase">Peso Actual</span>
+                            <i class="fa-solid fa-weight-scale text-purple-500"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-slate-800" id="dashWeightText">74.5 kg</div>
+                        <span class="text-xs text-emerald-600 font-semibold block"><i class="fa-solid fa-arrow-down"></i> -1.2 kg este mes</span>
+                    </div>
+                </div>
+
+                <!-- Shortcuts Section -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                    <h3 class="font-extrabold text-slate-800 text-base">Acceso Rápido a Módulos</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="switchModule('plan')" class="p-4 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 flex flex-col items-center text-center space-y-2 transition-all">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg font-bold"><i class="fa-regular fa-calendar-check"></i></div>
+                            <span class="text-xs font-bold text-slate-800">Ver Plan de Hoy</span>
+                        </button>
+                        <button onclick="switchModule('alimentacion')" class="p-4 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 flex flex-col items-center text-center space-y-2 transition-all">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-utensils"></i></div>
+                            <span class="text-xs font-bold text-slate-800">Diario de Comidas</span>
+                        </button>
+                        <button onclick="switchModule('progreso')" class="p-4 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 flex flex-col items-center text-center space-y-2 transition-all">
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg font-bold"><i class="fa-regular fa-face-smile"></i></div>
+                            <span class="text-xs font-bold text-slate-800">Evolución de Peso</span>
+                        </button>
+                        <button onclick="switchModule('mensajes')" class="p-4 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 flex flex-col items-center text-center space-y-2 transition-all">
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg font-bold"><i class="fa-regular fa-envelope"></i></div>
+                            <span class="text-xs font-bold text-slate-800">Contactar Nutri</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="module-plan" class="space-y-6">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Mi Plan Nutricional</h2>
+                        <p class="text-xs text-slate-500">Planificación semanal de alimentos estructurada por comidas.</p>
+                    </div>
+
+                    <!-- Nutritionist Add Meal Action -->
+                    <button id="nutriAddBtn" onclick="openAddMealModal()" class="hidden bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-brand-600/20 flex items-center justify-center gap-2 text-xs transition-all">
+                        <i class="fa-solid fa-plus"></i> Asignar Platillo a Paciente
+                    </button>
+                </div>
+
+                <!-- Day Selector Bar -->
+                <div class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between gap-2 overflow-x-auto">
+                    <div class="flex space-x-2 min-w-max w-full justify-between" id="daysContainer">
+                        <!-- Days rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Adherence Progress Bar -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="text-slate-700 flex items-center gap-2 text-xs sm:text-sm">
+                            <i class="fa-solid fa-bullseye text-brand-500"></i>
+                            Cumplimiento de Metas: <span id="selectedDayText" class="text-brand-600 font-bold">Lunes</span>
+                        </span>
+                        <span id="adherencePercent" class="text-brand-600 font-bold text-base">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200/50">
+                        <div id="adherenceBar" class="bg-gradient-to-r from-brand-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Meals Cards List -->
+                <div id="mealsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic Meals -->
+                </div>
+            </section>
+
+            <section id="module-alimentacion" class="hidden space-y-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Registro de Alimentación</h2>
+                    <p class="text-xs text-slate-500">Diario de ingesta calórica y distribución de macronutrientes.</p>
+                </div>
+
+                <!-- Macros Breakdown -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Proteínas</span>
+                        <div class="text-xl font-extrabold text-slate-800">95g / <span class="text-slate-400 text-sm">130g</span></div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-brand-500 h-full rounded-full" style="width: 73%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Carbohidratos</span>
+                        <div class="text-xl font-extrabold text-slate-800">160g / <span class="text-slate-400 text-sm">210g</span></div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full" style="width: 76%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Grasas Saludables</span>
+                        <div class="text-xl font-extrabold text-slate-800">42g / <span class="text-slate-400 text-sm">60g</span></div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-sky-500 h-full rounded-full" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Food Log -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                    <h3 class="font-extrabold text-slate-800 text-base">Alimentos Registrados Hoy</h3>
+                    
+                    <div class="divide-y divide-slate-100">
+                        <div class="py-3 flex justify-between items-center text-xs">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">🥣</span>
+                                <div>
+                                    <span class="font-bold text-slate-800 block text-sm">Avena con Arándanos</span>
+                                    <span class="text-slate-400">Desayuno • 08:30 AM</span>
+                                </div>
+                            </div>
+                            <span class="font-extrabold text-slate-700">320 kcal</span>
+                        </div>
+
+                        <div class="py-3 flex justify-between items-center text-xs">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">🍎</span>
+                                <div>
+                                    <span class="font-bold text-slate-800 block text-sm">Manzana + 10 Almendras</span>
+                                    <span class="text-slate-400">Media Mañana • 11:00 AM</span>
+                                </div>
+                            </div>
+                            <span class="font-extrabold text-slate-700">180 kcal</span>
+                        </div>
+
+                        <div class="py-3 flex justify-between items-center text-xs">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center font-bold">🍗</span>
+                                <div>
+                                    <span class="font-bold text-slate-800 block text-sm">Pechuga de Pollo + Quinua</span>
+                                    <span class="text-slate-400">Almuerzo • 02:00 PM</span>
+                                </div>
+                            </div>
+                            <span class="font-extrabold text-slate-700">550 kcal</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="module-progreso" class="hidden space-y-6">
+                
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Evolución y Progreso</h2>
+                        <p class="text-xs text-slate-500">Histórico de mediciones antropométricas y objetivos.</p>
+                    </div>
+
+                    <button onclick="openWeightModal()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-md transition-all">
+                        + Nueva Medición
+                    </button>
+                </div>
+
+                <!-- Stats summary -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-weight-scale"></i>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-slate-400 uppercase">Peso Actual</span>
+                            <span id="metricWeight" class="text-2xl font-extrabold text-slate-800">74.5 <span class="text-xs font-medium text-slate-500">kg</span></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-slate-400 uppercase">IMC Estimado</span>
+                            <span class="text-2xl font-extrabold text-slate-800">24.3 <span class="text-xs font-bold px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">Normal</span></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-slate-400 uppercase">Meta Definida</span>
+                            <span class="text-2xl font-extrabold text-slate-800">70.0 <span class="text-xs font-medium text-slate-500">kg</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart container -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                    <h3 class="font-extrabold text-slate-800 text-base">Gráfica de Cambio de Peso Corporal</h3>
+                    <div class="h-64 sm:h-72 w-full">
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="module-mensajes" class="hidden bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col h-[600px] overflow-hidden">
+                <!-- Chat Header -->
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <div id="chatAvatar" class="w-10 h-10 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                                👩‍⚕️
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div>
+                            <h3 id="chatPartnerName" class="font-bold text-slate-800 text-sm">Dra. María (Nutricionista)</h3>
+                            <p class="text-xs text-emerald-600 font-medium">En línea para consultas</p>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400">
+                        <i class="fa-solid fa-lock text-slate-300"></i> Canal Directo
+                    </div>
+                </div>
+
+                <!-- Chat Messages Body -->
+                <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/50">
+                    <!-- Dynamic Messages -->
+                </div>
+
+                <!-- Chat Input Form -->
+                <form id="chatForm" onsubmit="handleSendChat(event)" class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+                    <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-100 text-slate-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 border border-slate-200/60">
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white p-3 rounded-xl shadow-lg shadow-brand-600/20 font-bold flex items-center justify-center w-12 h-12 transition-all">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </section>
+
+            <section id="module-perfil" class="hidden space-y-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Perfil de Usuario</h2>
+                    <p class="text-xs text-slate-500">Información antropométrica y configuración del sistema.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                    <div class="flex items-center space-x-4 pb-6 border-b border-slate-100">
+                        <div id="profileBigAvatar" class="w-16 h-16 rounded-2xl bg-brand-600 text-white font-extrabold text-2xl flex items-center justify-center shadow-lg">
+                            JP
+                        </div>
+                        <div>
+                            <h3 id="profileName" class="font-extrabold text-slate-800 text-lg">Juan Pérez</h3>
+                            <p id="profileRole" class="text-xs text-brand-600 font-bold uppercase">Paciente</p>
+                            <span id="profileEmail" class="text-xs text-slate-400">juan@nutrisalud.com</span>
+                        </div>
+                    </div>
+
+                    <form onsubmit="saveProfile(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Estatura (cm)</label>
+                                <input type="number" id="profileHeight" value="175" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Edad</label>
+                                <input type="number" id="profileAge" value="29" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Alergias o Restricciones Alimentarias</label>
+                            <input type="text" id="profileAllergies" value="Lactosa (Tolerancia baja), Nueces" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-3 rounded-xl text-xs shadow-md transition-all">
+                                Guardar Cambios del Perfil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal Add Meal (Nutricionista) -->
+    <div id="addMealModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-extrabold text-lg text-slate-800">Añadir Alimento a la Dieta</h3>
+                <button onclick="closeAddMealModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="saveNewMeal(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Día de la Semana</label>
+                    <select id="modalDay" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold text-slate-800">
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Momento del Día</label>
+                    <select id="modalCategory" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold text-slate-800">
+                        <option value="Desayuno">Desayuno</option>
+                        <option value="Media Mañana">Media Mañana</option>
+                        <option value="Almuerzo">Almuerzo</option>
+                        <option value="Merienda">Merienda</option>
+                        <option value="Cena">Cena</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Platillo / Alimento</label>
+                    <input type="text" id="modalTitle" required placeholder="Ej: Pechuga de Pollo con Quinua" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Porción / Detalle Nutricional</label>
+                    <input type="text" id="modalPortion" required placeholder="Ej: 150g de pollo + 1/2 taza de quinua" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800">
+                </div>
+
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeAddMealModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-sm transition-all">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl text-sm shadow-lg shadow-brand-600/20 transition-all">Guardar Platillo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Add Weight -->
+    <div id="addWeightModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-5 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-extrabold text-lg text-slate-800">Nueva Medición de Peso</h3>
+                <button onclick="closeWeightModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form onsubmit="saveNewWeight(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Peso en Kilogramos (kg)</label>
+                    <input type="number" step="0.1" id="modalWeightValue" required placeholder="Ej: 74.0" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800">
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeWeightModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-sm transition-all">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl text-sm shadow-lg shadow-brand-600/20 transition-all">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- CONSTANTS & DEFAULTS ---
+        const DEFAULT_DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+
+        const DEFAULT_USERS = [
+            { email: 'juan@nutrisalud.com', password: '123', name: 'Juan Pérez', role: 'patient' },
+            { email: 'maria@nutrisalud.com', password: '123', name: 'Dra. María', role: 'nutritionist' }
+        ];
+
+        const DEFAULT_MEALS = [
+            { id: '1', day: 'Lunes', category: 'Desayuno', title: 'Avena con Frutos Rojos y Chía', portion: '1 taza de avena + 50g arándanos + 1 cda chía', completed: true },
+            { id: '2', day: 'Lunes', category: 'Media Mañana', title: 'Manzana Verde y Almendras', portion: '1 manzana mediana + 10 almendras', completed: true },
+            { id: '3', day: 'Lunes', category: 'Almuerzo', title: 'Pechuga a la Plancha con Quinua', portion: '150g pechuga + 1/2 taza quinua + Ensalada', completed: false },
+            { id: '4', day: 'Lunes', category: 'Merienda', title: 'Yogurt Griego Natural', portion: '150g yogurt sin azúcar', completed: false },
+            { id: '5', day: 'Lunes', category: 'Cena', title: 'Ensalada de Atún y Palta', portion: '1 lata atún en agua + 1/2 palta', completed: false },
+            { id: '6', day: 'Martes', category: 'Desayuno', title: 'Omelette de Claras con Espinaca', portion: '3 claras + 1 huevo + Espinacas', completed: false },
+            { id: '7', day: 'Martes', category: 'Almuerzo', title: 'Filete de Merluza al Horno', portion: '180g pescado + camote + brócoli', completed: false }
+        ];
+
+        const DEFAULT_MESSAGES = [
+            { sender: 'nutritionist', text: '¡Hola Juan! He actualizado tu plan alimenticio para esta semana.', time: '09:00 AM' },
+            { sender: 'patient', text: '¡Excelente Dra. María! Ya compré todos los ingredientes.', time: '09:15 AM' }
+        ];
+
+        const DEFAULT_WEIGHTS = [
+            { date: 'Sem 1', weight: 76.5 },
+            { date: 'Sem 2', weight: 75.8 },
+            { date: 'Sem 3', weight: 75.0 },
+            { date: 'Sem 4', weight: 74.5 }
+        ];
+
+        // --- APP STATE ---
+        let users = [];
+        let currentUser = null;
+        let activeModule = 'plan'; // 'inicio', 'plan', 'alimentacion', 'progreso', 'mensajes', 'perfil'
+        let selectedDay = 'Lunes';
+        let meals = [];
+        let messages = [];
+        let weights = [];
+        let chartInstance = null;
+
+        // Load storage
+        function initStorage() {
+            const storedUsers = localStorage.getItem('nutri_users');
+            users = storedUsers ? JSON.parse(storedUsers) : DEFAULT_USERS;
+
+            const storedSession = localStorage.getItem('nutri_session');
+            if (storedSession) {
+                currentUser = JSON.parse(storedSession);
+            }
+
+            const storedMeals = localStorage.getItem('nutri_meals');
+            meals = storedMeals ? JSON.parse(storedMeals) : DEFAULT_MEALS;
+
+            const storedMsgs = localStorage.getItem('nutri_messages');
+            messages = storedMsgs ? JSON.parse(storedMsgs) : DEFAULT_MESSAGES;
+
+            const storedWeights = localStorage.getItem('nutri_weights');
+            weights = storedWeights ? JSON.parse(storedWeights) : DEFAULT_WEIGHTS;
+        }
+
+        function saveData() {
+            localStorage.setItem('nutri_users', JSON.stringify(users));
+            localStorage.setItem('nutri_meals', JSON.stringify(meals));
+            localStorage.setItem('nutri_messages', JSON.stringify(messages));
+            localStorage.setItem('nutri_weights', JSON.stringify(weights));
+            if (currentUser) {
+                localStorage.setItem('nutri_session', JSON.stringify(currentUser));
+            } else {
+                localStorage.removeItem('nutri_session');
+            }
+        }
+
+        // --- AUTH LOGIC ---
+        function toggleAuthMode(mode) {
+            document.getElementById('loginFormContainer').classList.toggle('hidden', mode !== 'login');
+            document.getElementById('registerFormContainer').classList.toggle('hidden', mode !== 'register');
+            document.getElementById('loginError').classList.add('hidden');
+        }
+
+        function fillDemo(role) {
+            if (role === 'patient') {
+                document.getElementById('loginEmail').value = 'juan@nutrisalud.com';
+                document.getElementById('loginPassword').value = '123';
+            } else {
+                document.getElementById('loginEmail').value = 'maria@nutrisalud.com';
+                document.getElementById('loginPassword').value = '123';
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.email === email && u.password === pass);
+
+            if (user) {
+                currentUser = user;
+                saveData();
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                setupUserUI();
+                switchModule('plan');
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const role = document.getElementById('regRole').value;
+            const pass = document.getElementById('regPassword').value;
+
+            if (users.some(u => u.email === email)) {
+                alert('Este correo ya está registrado.');
+                return;
+            }
+
+            const newUser = { email, password: pass, name, role };
+            users.push(newUser);
+            currentUser = newUser;
+            saveData();
+
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            setupUserUI();
+            switchModule('plan');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('nutri_session');
+            window.location.href = 'index.html';
+        }
+
+        // --- UI & NAVIGATION ---
+        function setupUserUI() {
+            if (!currentUser) return;
+
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userAvatar').innerText = initials;
+            document.getElementById('profileBigAvatar').innerText = initials;
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('profileName').innerText = currentUser.name;
+            document.getElementById('profileEmail').innerText = currentUser.email;
+
+            const isNutri = currentUser.role === 'nutritionist';
+            document.getElementById('userRoleBadge').innerText = isNutri ? 'Nutricionista' : 'Paciente';
+            document.getElementById('profileRole').innerText = isNutri ? 'Nutricionista' : 'Paciente';
+
+            // Nutri specific controls
+            document.getElementById('nutriAddBtn').classList.toggle('hidden', !isNutri);
+
+            // Dashboard
+            document.getElementById('dashRoleTitle').innerText = isNutri ? 'Panel Médico' : 'Panel de Paciente';
+            document.getElementById('welcomeText').innerText = `¡Hola de nuevo, ${currentUser.name}! 👋`;
+
+            // Chat UI Partner Name
+            if (isNutri) {
+                document.getElementById('chatPartnerName').innerText = 'Juan Pérez (Paciente)';
+                document.getElementById('chatAvatar').innerText = '👤';
+            } else {
+                document.getElementById('chatPartnerName').innerText = 'Dra. María (Nutricionista)';
+                document.getElementById('chatAvatar').innerText = '👩‍⚕️';
+            }
+        }
+
+        function switchModule(mod) {
+            activeModule = mod;
+
+            const modules = ['inicio', 'plan', 'alimentacion', 'progreso', 'mensajes', 'perfil'];
+
+            // Update sidebar buttons styling matching EXACT image styling
+            modules.forEach(m => {
+                const btn = document.getElementById(`nav-${m}`);
+                const sec = document.getElementById(`module-${m}`);
+
+                if (m === mod) {
+                    btn.className = "w-full flex items-center space-x-3.5 px-3 py-2.5 rounded-lg bg-[#cbe2fe] text-slate-900 font-bold text-sm shadow-sm transition-all";
+                    sec.classList.remove('hidden');
+                } else {
+                    btn.className = "w-full flex items-center space-x-3.5 px-3 py-2.5 rounded-lg text-slate-800 hover:bg-slate-300/60 font-semibold text-sm transition-all";
+                    sec.classList.add('hidden');
+                }
+            });
+
+            if (mod === 'plan') {
+                renderDays();
+                renderMeals();
+            } else if (mod === 'progreso') {
+                renderChart();
+            } else if (mod === 'mensajes') {
+                renderChat();
+            }
+        }
+
+        // --- PLAN & MEALS MODULE ---
+        function renderDays() {
+            const container = document.getElementById('daysContainer');
+            container.innerHTML = DEFAULT_DAYS.map(day => {
+                const isActive = day === selectedDay;
+                return `
+                    <button onclick="selectDay('${day}')" class="px-5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+                        isActive 
+                        ? 'bg-brand-600 text-white shadow-md shadow-brand-600/20 scale-105' 
+                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }">
+                        ${day}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectDay(day) {
+            selectedDay = day;
+            document.getElementById('selectedDayText').innerText = day;
+            renderDays();
+            renderMeals();
+        }
+
+        function renderMeals() {
+            const list = document.getElementById('mealsList');
+            const dayMeals = meals.filter(m => m.day === selectedDay);
+
+            if (dayMeals.length === 0) {
+                list.innerHTML = `
+                    <div class="col-span-full bg-white p-10 rounded-2xl border border-slate-200 text-center space-y-2">
+                        <div class="text-3xl text-slate-300"><i class="fa-solid fa-plate-wheat"></i></div>
+                        <h4 class="font-bold text-slate-700">Sin platillos cargados para el ${selectedDay}</h4>
+                        <p class="text-xs text-slate-400">Selecciona otro día o añade platillos con tu perfil de nutricionista.</p>
+                    </div>
+                `;
+                updateAdherence(0, 0);
+                return;
+            }
+
+            let completedCount = 0;
+
+            list.innerHTML = dayMeals.map(m => {
+                if (m.completed) completedCount++;
+                const isPatient = currentUser && currentUser.role === 'patient';
+                return `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-lg uppercase tracking-wide">
+                                    ${m.category}
+                                </span>
+                                ${currentUser && currentUser.role === 'nutritionist' ? `
+                                    <button onclick="deleteMeal('${m.id}')" class="text-slate-300 hover:text-rose-500 transition-colors p-1" title="Eliminar platillo">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                            <h4 class="font-extrabold text-slate-800 text-base ${m.completed ? 'line-through text-slate-400' : ''}">${m.title}</h4>
+                            <p class="text-xs text-slate-500 font-medium"><i class="fa-solid fa-utensils text-slate-300 mr-1"></i> ${m.portion}</p>
+                        </div>
+
+                        ${isPatient ? `
+                            <label class="flex items-center space-x-3 pt-3 border-t border-slate-100 cursor-pointer">
+                                <input type="checkbox" ${m.completed ? 'checked' : ''} onchange="toggleMeal('${m.id}')" class="w-5 h-5 text-brand-600 rounded-md border-slate-300 focus:ring-brand-500">
+                                <span class="text-xs font-bold ${m.completed ? 'text-brand-600' : 'text-slate-600'}">
+                                    ${m.completed ? '¡Consumido!' : 'Marcar como consumido'}
+                                </span>
+                            </label>
+                        ` : `
+                            <div class="pt-3 border-t border-slate-100 text-xs font-semibold ${m.completed ? 'text-emerald-600' : 'text-amber-600'} flex items-center gap-1.5">
+                                <i class="fa-solid ${m.completed ? 'fa-circle-check' : 'fa-clock'}"></i>
+                                <span>${m.completed ? 'Completado por el paciente' : 'Pendiente de consumo'}</span>
+                            </div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+
+            updateAdherence(completedCount, dayMeals.length);
+        }
+
+        function toggleMeal(id) {
+            const meal = meals.find(m => m.id === id);
+            if (meal) {
+                meal.completed = !meal.completed;
+                saveData();
+                renderMeals();
+            }
+        }
+
+        function deleteMeal(id) {
+            if (confirm('¿Deseas eliminar este alimento del plan?')) {
+                meals = meals.filter(m => m.id !== id);
+                saveData();
+                renderMeals();
+            }
+        }
+
+        function updateAdherence(completed, total) {
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('adherencePercent').innerText = `${percent}%`;
+            document.getElementById('adherenceBar').style.width = `${percent}%`;
+
+            document.getElementById('dashAdherenceText').innerText = `${percent}%`;
+            document.getElementById('dashAdherenceBar').style.width = `${percent}%`;
+        }
+
+        // Modals
+        function openAddMealModal() {
+            document.getElementById('modalDay').value = selectedDay;
+            document.getElementById('addMealModal').classList.remove('hidden');
+        }
+        function closeAddMealModal() {
+            document.getElementById('addMealModal').classList.add('hidden');
+        }
+        function saveNewMeal(e) {
+            e.preventDefault();
+            const newMeal = {
+                id: Date.now().toString(),
+                day: document.getElementById('modalDay').value,
+                category: document.getElementById('modalCategory').value,
+                title: document.getElementById('modalTitle').value,
+                portion: document.getElementById('modalPortion').value,
+                completed: false
+            };
+            meals.push(newMeal);
+            saveData();
+            closeAddMealModal();
+            selectDay(newMeal.day);
+        }
+
+        // --- CHAT MODULE ---
+        function renderChat() {
+            const chatBox = document.getElementById('chatMessages');
+            const myRole = currentUser ? currentUser.role : 'patient';
+
+            chatBox.innerHTML = messages.map(msg => {
+                const isMe = msg.sender === myRole;
+                return `
+                    <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? 'chat-bubble-patient' : 'chat-bubble-nutri'}">
+                            ${msg.text}
+                        </div>
+                        <span class="text-[10px] text-slate-400 mt-1 font-semibold px-1">${msg.time}</span>
+                    </div>
+                `;
+            }).join('');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleSendChat(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const myRole = currentUser ? currentUser.role : 'patient';
+
+            messages.push({
+                sender: myRole,
+                text: text,
+                time: timeNow
+            });
+
+            input.value = '';
+            saveData();
+            renderChat();
+        }
+
+        // --- CHART & PROGRESS ---
+        function renderChart() {
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            const labels = weights.map(w => w.date);
+            const dataValues = weights.map(w => w.weight);
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Peso (kg)',
+                        data: dataValues,
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#16a34a',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 65, max: 80, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function openWeightModal() {
+            document.getElementById('addWeightModal').classList.remove('hidden');
+        }
+        function closeWeightModal() {
+            document.getElementById('addWeightModal').classList.add('hidden');
+        }
+        function saveNewWeight(e) {
+            e.preventDefault();
+            const val = parseFloat(document.getElementById('modalWeightValue').value);
+            if (val) {
+                weights.push({ date: `Sem ${weights.length + 1}`, weight: val });
+                document.getElementById('metricWeight').innerText = `${val.toFixed(1)} kg`;
+                document.getElementById('dashWeightText').innerText = `${val.toFixed(1)} kg`;
+                saveData();
+                closeWeightModal();
+                renderChart();
+            }
+        }
+
+        function saveProfile(e) {
+            e.preventDefault();
+            alert('¡Perfil actualizado con éxito!');
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            initStorage();
+            if (!currentUser) { window.location.replace('index.html'); return; }
+            if (currentUser.role !== 'nutritionist') { window.location.replace('paciente.html'); return; }
+
+            if (currentUser) {
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                setupUserUI();
+                switchModule('plan');
+            } else {
+                document.getElementById('authScreen').classList.remove('hidden');
+            }
+        };
+    </script>
+</body>
+</html>

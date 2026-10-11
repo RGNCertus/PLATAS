@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PLATAS | Acceso</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    .auth-wrap {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        background: #f5fbf7;
+    }
+
+    .auth-intro {
+        background: linear-gradient(145deg, #073f2c, #027a4f 65%, #70bd91);
+        color: white;
+        padding: 8vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-intro:after {
+        content: '🌿';
+        font-size: 190px;
+        position: absolute;
+        right: -15px;
+        bottom: -60px;
+        opacity: .14;
+    }
+
+    .auth-intro h1 {
+        font-size: clamp(34px, 5vw, 62px);
+        line-height: 1.05;
+        margin: 22px 0;
+    }
+
+    .auth-intro p {
+        max-width: 450px;
+        line-height: 1.8;
+        color: #e0f5e8;
+    }
+
+    .auth-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .auth-logo img {
+        width: 52px;
+        height: 52px;
+        object-fit: contain;
+    }
+
+    .auth-panel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+    }
+
+    .auth-card {
+        width: min(430px, 100%);
+        background: white;
+        border: 1px solid #e2ece7;
+        border-radius: 22px;
+        padding: 30px;
+        box-shadow: 0 20px 60px #164d3210;
+    }
+
+    .auth-card h2 {
+        margin: 0 0 5px;
+        font-size: 25px;
+        color: #203b32;
+    }
+
+    .auth-card > p {
+        color: #718096;
+        font-size: 12px;
+        margin: 0 0 24px;
+    }
+
+    .auth-card label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #52665c;
+        margin: 15px 0;
+    }
+
+    .auth-card input,
+    .auth-card select {
+        display: block;
+        width: 100%;
+        border: 1px solid #d5e2db;
+        border-radius: 9px;
+        padding: 12px;
+        margin-top: 7px;
+        background: #fbfdfc;
+        font-size: 12px;
+    }
+
+    .auth-card .primary {
+        width: 100%;
+        margin-top: 12px;
+        padding: 13px;
+    }
+
+    .auth-switch {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 11px;
+        color: #718096;
+    }
+
+    .auth-switch button {
+        border: 0;
+        background: none;
+        color: #027a4f;
+        font-weight: 700;
+    }
+
+    .auth-error {
+        display: none;
+        background: #fff0f0;
+        color: #bd3b3b;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 11px;
+        margin-top: 12px;
+    }
+
+    .demo {
+        margin-top: 18px;
+        padding: 12px;
+        background: #f5faf7;
+        border-radius: 10px;
+        font-size: 10px;
+        color: #61756a;
+        line-height: 1.7;
+    }
+
+    .demo b {
+        color: #027a4f;
+    }
+
+    .brand-leaf {
+        font-size: 30px;
+    }
+
+    @media (max-width: 760px) {
+    .auth-wrap {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-intro {
+        padding: 30px 25px;
+        min-height: 230px;
+    }
+
+    .auth-intro h1 {
+        font-size: 35px;
+        margin: 12px 0;
+    }
+
+    .auth-intro p {
+        margin: 0;
+    }
+
+    .auth-intro:after {
+        font-size: 100px;
+    }
+
+    .auth-panel {
+        padding: 20px;
+    }
+
+    .auth-card {
+        padding: 24px;
+    }
+    }
+</style>
+</head>
+<body>
+
+<div class="auth-wrap">
+    <section class="auth-intro">
+    <div class="auth-logo">
+        <img src="logoplatas.png" alt="Logo PLATAS" onerror="this.style.display='none'">
+        <span>PLATAS</span>
+    </div>
+    <h1>Tu salud,<br>un paso a la vez.</h1>
+    <p>Una plataforma para organizar planes alimenticios, registrar avances y facilitar la comunicación entre pacientes y nutricionistas.</p>
+    </section>
+
+    <main class="auth-panel">
+    <section class="auth-card">
+        <div id="loginBox">
+        <h2>¡Bienvenido!</h2>
+        <p>Inicia sesión para entrar a tu espacio de PLATAS.</p>
+        <form id="loginForm">
+            <label>
+            Correo electrónico
+            <input id="loginEmail" type="email" placeholder="correo@ejemplo.com" required>
+            </label>
+            <label>
+            Contraseña
+            <input id="loginPassword" type="password" placeholder="Tu contraseña" required>
+            </label>
+            <div id="loginError" class="auth-error">No encontramos esa cuenta o la contraseña no coincide.</div>
+            <button class="primary">Iniciar sesión</button>
+        </form>
+        <div class="auth-switch">
+            ¿No tienes cuenta? <button id="showRegister">Crear una cuenta</button>
+        </div>
+        <div class="demo">
+            <b>Cuentas de demostración</b><br>
+            Paciente: <b>juan@nutrisalud.com</b> / <b>123</b><br>
+            Nutricionista: <b>maria@nutrisalud.com</b> / <b>123</b>
+        </div>
+        </div>
+
+        <div id="registerBox" class="hidden">
+        <h2>Crear cuenta</h2>
+        <p>Regístrate y elige cómo utilizarás PLATAS.</p>
+        <form id="registerForm">
+            <label>
+            Nombre completo
+            <input id="regName" placeholder="Ej. Sofía Martínez" required>
+            </label>
+            <label>
+            Correo electrónico
+            <input id="regEmail" type="email" placeholder="correo@ejemplo.com" required>
+            </label>
+            <label>
+            Tipo de cuenta
+            <select id="regRole">
+                <option value="patient">Paciente</option>
+                <option value="nutritionist">Nutricionista</option>
+            </select>
+            </label>
+            <label>
+            Contraseña
+            <input id="regPassword" type="password" minlength="3" placeholder="Al menos 3 caracteres" required>
+            </label>
+            <div id="registerError" class="auth-error"></div>
+            <button class="primary">Registrarme</button>
+        </form>
+        <div class="auth-switch">
+            ¿Ya tienes cuenta? <button id="showLogin">Iniciar sesión</button>
+        </div>
+        </div>
+    </section>
+    </main>
+</div>
+
+<script>
+    const DEFAULT_USERS = [
+    { email: 'juan@nutrisalud.com', password: '123', name: 'Juan Pérez', role: 'patient' },
+    { email: 'maria@nutrisalud.com', password: '123', name: 'Dra. María', role: 'nutritionist' }
+    ];
+
+    try {
+    const s = JSON.parse(localStorage.getItem('nutri_session'));
+    if (s && s.role) {
+        location.replace(s.role === 'nutritionist' ? 'nutricionista.html' : 'paciente.html');
+    }
+    } catch (e) {}
+
+    function getUsers() {
+    try {
+        const v = JSON.parse(localStorage.getItem('nutri_users'));
+        return Array.isArray(v) && v.length ? v : DEFAULT_USERS.slice();
+    } catch (e) {
+        return DEFAULT_USERS.slice();
+    }
+    }
+
+    function saveUsers(users) {
+    localStorage.setItem('nutri_users', JSON.stringify(users));
+    }
+
+    function enter(user) {
+    localStorage.setItem('nutri_session', JSON.stringify(user));
+    location.href = user.role === 'nutritionist' ? 'nutricionista.html' : 'paciente.html';
+    }
+
+    document.getElementById('showRegister').onclick = () => {
+    document.getElementById('loginBox').classList.add('hidden');
+    document.getElementById('registerBox').classList.remove('hidden');
+    };
+
+    document.getElementById('showLogin').onclick = () => {
+    document.getElementById('registerBox').classList.add('hidden');
+    document.getElementById('loginBox').classList.remove('hidden');
+    };
+
+    document.getElementById('loginForm').onsubmit = (e) => {
+    e.preventDefault();
+    const users = getUsers();
+    saveUsers(users);
+
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
+
+    const user = users.find(u => u.email.toLowerCase() === email && u.password === password);
+
+    if (!user) {
+        document.getElementById('loginError').style.display = 'block';
+        return;
+    }
+    enter(user);
+    };
+
+    document.getElementById('registerForm').onsubmit = (e) => {
+    e.preventDefault();
+    const users = getUsers();
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const password = document.getElementById('regPassword').value;
+    const role = document.getElementById('regRole').value;
+    const err = document.getElementById('registerError');
+
+    if (users.some(u => u.email.toLowerCase() === email)) {
+        err.textContent = 'Ese correo ya está registrado. Inicia sesión o usa otro correo.';
+        err.style.display = 'block';
+        return;
+    }
+
+    const user = { name, email, password, role };
+    users.push(user);
+    saveUsers(users);
+    enter(user);
+    };
+</script>
+
+</body>
+</html>
